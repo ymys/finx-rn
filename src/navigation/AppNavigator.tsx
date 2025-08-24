@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../contexts/ThemeContext';
+import { FloatingJournalMenu } from '../components';
 
 // Import screens
 import {
@@ -43,6 +44,7 @@ const getTabBarIcon = (routeName: string, focused: boolean, color: string, size:
 
 export const AppNavigator: React.FC = () => {
   const { theme } = useTheme();
+  const [showJournalMenu, setShowJournalMenu] = useState(false);
 
   return (
     <NavigationContainer>
@@ -100,6 +102,12 @@ export const AppNavigator: React.FC = () => {
           options={{
             title: 'Journals',
           }}
+          listeners={{
+            tabPress: (e) => {
+              e.preventDefault();
+              setShowJournalMenu(true);
+            },
+          }}
         />
         <Tab.Screen
           name="Insights"
@@ -116,6 +124,11 @@ export const AppNavigator: React.FC = () => {
           }}
         />
       </Tab.Navigator>
+      
+      <FloatingJournalMenu
+        visible={showJournalMenu}
+        onClose={() => setShowJournalMenu(false)}
+      />
     </NavigationContainer>
   );
 };

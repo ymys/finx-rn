@@ -12,7 +12,7 @@ export const JournalsScreen: React.FC = () => {
           Journals
         </Text>
         <Text style={[styles.subtitle, { color: theme.colors.secondaryText }]}>
-          Transaction journals and records coming soon
+          Tap the Journals tab to access journal options
         </Text>
       </View>
     </SafeAreaView>
