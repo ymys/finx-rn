@@ -8,9 +8,11 @@ import {
   SafeAreaView,
   StatusBar,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../contexts/ThemeContext';
+import { useAuth } from '../contexts/AuthContext';
 
 interface LoginScreenProps {
   onLogin: () => void;
@@ -18,6 +20,7 @@ interface LoginScreenProps {
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
   const { theme } = useTheme();
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -26,12 +29,28 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = () => {
-    if (email === 'admin@gmail.com' && password === 'admin') {
-      onLogin();
-    } else {
-      Alert.alert('Login Failed', 'Invalid credentials. Use admin@gmail.com / admin');
+  const handleLogin = async () => {
+    if (!email.trim() || !password.trim()) {
+      Alert.alert('Validation Error', 'Please enter both email and password');
+      return;
+    }
+
+    setIsLoading(true);
+    
+    try {
+      const result = await login({ email: email.trim(), password });
+      
+      if (result.success) {
+        onLogin();
+      } else {
+        Alert.alert('Login Failed', result.error || 'Invalid credentials');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'An unexpected error occurred. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -190,9 +209,19 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
           )}
 
           {/* Sign In/Create Account Button */}
-          <TouchableOpacity style={styles.signInButton} onPress={handleLogin}>
-            <Text style={styles.signInButtonText}>{isSignUp ? 'Create Account' : 'Sign In'}</Text>
-            <Icon name="arrow-forward" size={20} color="#000" style={styles.arrowIcon} />
+          <TouchableOpacity 
+            style={[styles.signInButton, isLoading && styles.signInButtonDisabled]} 
+            onPress={handleLogin}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <ActivityIndicator size="small" color="#000" />
+            ) : (
+              <>
+                <Text style={styles.signInButtonText}>{isSignUp ? 'Create Account' : 'Sign In'}</Text>
+                <Icon name="arrow-forward" size={20} color="#000" style={styles.arrowIcon} />
+              </>
+            )}
           </TouchableOpacity>
 
           {/* Divider */}
@@ -319,6 +348,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 8,
     marginBottom: 24,
+  },
+  signInButtonDisabled: {
+    backgroundColor: '#5a8a2f',
+    opacity: 0.7,
   },
   signInButtonText: {
     fontSize: 16,
