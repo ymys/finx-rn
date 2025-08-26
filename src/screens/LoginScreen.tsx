@@ -20,7 +20,7 @@ interface LoginScreenProps {
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
   const { theme } = useTheme();
-  const { loginWithGoogle } = useAuth();
+  const { loginWithGoogle, loginWithEmail, isLoading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -30,11 +30,18 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
 
-  const handleLogin = () => {
-    if (email === 'admin@gmail.com' && password === 'admin') {
-      onLogin();
-    } else {
-      Alert.alert('Login Failed', 'Invalid credentials. Use admin@gmail.com / admin');
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('Login Failed', 'Please enter both email and password');
+      return;
+    }
+
+    try {
+      await loginWithEmail(email, password);
+      onLogin(); // Navigate to main app
+    } catch (error: any) {
+      console.log('Login failed:', error);
+      Alert.alert('Login Failed', error.message || 'Invalid credentials. Please try again.');
     }
   };
 

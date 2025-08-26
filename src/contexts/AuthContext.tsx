@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { directusAuth } from '../services';
 
 interface User {
   id: string;
@@ -14,6 +15,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   user: User | null;
   login: () => void;
+  loginWithEmail: (email: string, password: string) => Promise<void>;
   loginWithGoogle: (userInfo: any) => Promise<void>;
   logout: () => Promise<void>;
   isLoading: boolean;
@@ -94,6 +96,44 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsAuthenticated(true);
   };
 
+  const loginWithEmail = async (email: string, password: string) => {
+    try {
+      setIsLoading(true);
+      
+      // Login with Directus
+      await directusAuth.login(email, password);
+      
+      // Get current user from Directus
+      const directusUser = await directusAuth.getCurrentUser();
+      
+      console.log('Directus user response:', JSON.stringify(directusUser, null, 2));
+      
+      if (directusUser && typeof directusUser === 'object' && directusUser.id) {
+        const user: User = {
+          id: directusUser.id || 'unknown',
+          name: `${directusUser.first_name || ''} ${directusUser.last_name || ''}`.trim() || 'User',
+          email: directusUser.email || '',
+          photo: directusUser.avatar || undefined,
+          provider: 'email',
+        };
+        
+        // Save user to AsyncStorage
+        await AsyncStorage.setItem('user', JSON.stringify(user));
+        
+        setUser(user);
+        setIsAuthenticated(true);
+      } else {
+        console.log('Invalid directus user response:', directusUser);
+        throw new Error('Failed to get user information from server');
+      }
+    } catch (error) {
+      console.log('Login with email error:', error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const loginWithGoogle = async (userInfo: any) => {
     try {
       console.log('Google userInfo structure:', JSON.stringify(userInfo, null, 2));
@@ -150,6 +190,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         isAuthenticated, 
         user, 
         login, 
+        loginWithEmail, 
         loginWithGoogle, 
         logout, 
         isLoading 

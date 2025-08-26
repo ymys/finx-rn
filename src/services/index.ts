@@ -1,0 +1,1 @@
+export { default as directusAuth, directusAuth as directus } from './directus';
