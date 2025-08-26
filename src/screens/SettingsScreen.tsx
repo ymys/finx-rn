@@ -12,7 +12,7 @@ export const SettingsScreen: React.FC = () => {
           Settings
         </Text>
         <Text style={[styles.subtitle, { color: theme.colors.secondaryText }]}>
-          App settings and preferences coming soon
+          Tap the Settings tab to access settings options
         </Text>
       </View>
     </SafeAreaView>

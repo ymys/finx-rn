@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../contexts/ThemeContext';
-import { FloatingJournalMenu } from '../components';
+import { FloatingJournalMenu, FloatingSettingsMenu } from '../components';
 
 // Import screens
 import {
@@ -45,6 +45,7 @@ const getTabBarIcon = (routeName: string, focused: boolean, color: string, size:
 export const AppNavigator: React.FC = () => {
   const { theme } = useTheme();
   const [showJournalMenu, setShowJournalMenu] = useState(false);
+  const [showSettingsMenu, setShowSettingsMenu] = useState(false);
 
   return (
     <NavigationContainer>
@@ -122,12 +123,23 @@ export const AppNavigator: React.FC = () => {
           options={{
             title: 'Settings',
           }}
+          listeners={{
+            tabPress: (e) => {
+              e.preventDefault();
+              setShowSettingsMenu(true);
+            },
+          }}
         />
       </Tab.Navigator>
       
       <FloatingJournalMenu
         visible={showJournalMenu}
         onClose={() => setShowJournalMenu(false)}
+      />
+      
+      <FloatingSettingsMenu
+        visible={showSettingsMenu}
+        onClose={() => setShowSettingsMenu(false)}
       />
     </NavigationContainer>
   );
