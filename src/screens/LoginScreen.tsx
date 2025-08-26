@@ -11,6 +11,8 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../contexts/ThemeContext';
+import { useAuth } from '../contexts/AuthContext';
+import { GoogleSignInButton } from '../components';
 
 interface LoginScreenProps {
   onLogin: () => void;
@@ -18,6 +20,7 @@ interface LoginScreenProps {
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
   const { theme } = useTheme();
+  const { loginWithGoogle } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -35,8 +38,17 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
     }
   };
 
-  const handleGoogleSignIn = () => {
-    Alert.alert('Google Sign In', 'Google sign-in would be implemented here');
+  const handleGoogleSignInSuccess = async (userInfo: any) => {
+    try {
+      await loginWithGoogle(userInfo);
+      onLogin(); // Navigate to main app
+    } catch (error) {
+      console.log('Google Sign-In failed:', error);
+    }
+  };
+
+  const handleGoogleSignInError = (error: any) => {
+    console.log('Google Sign-In error:', error);
   };
 
   return (
@@ -203,12 +215,10 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
           </View>
 
           {/* Google Sign In Button */}
-          <TouchableOpacity style={styles.googleButton} onPress={handleGoogleSignIn}>
-            <View style={styles.googleButtonContent}>
-              <Icon name="logo-google" size={20} color="#fff" style={styles.googleIcon} />
-              <Text style={styles.googleButtonText}>Continue with Google</Text>
-            </View>
-          </TouchableOpacity>
+          <GoogleSignInButton
+            onSignInSuccess={handleGoogleSignInSuccess}
+            onSignInError={handleGoogleSignInError}
+          />
         </View>
       </View>
     </SafeAreaView>
@@ -344,24 +354,7 @@ const styles = StyleSheet.create({
     color: '#999',
     marginHorizontal: 16,
   },
-  googleButton: {
-    backgroundColor: '#4285F4',
-    borderRadius: 8,
-    paddingVertical: 16,
-    alignItems: 'center',
-  },
-  googleButtonContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  googleIcon: {
-    marginRight: 8,
-  },
-  googleButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#fff',
-  },
+
   nameContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
