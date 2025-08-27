@@ -6,9 +6,9 @@ import {
   TouchableOpacity,
   Animated,
   Dimensions,
-  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../contexts/ThemeContext';
 
 interface FloatingJournalMenuProps {
@@ -23,6 +23,7 @@ export const FloatingJournalMenu: React.FC<FloatingJournalMenuProps> = ({
   onClose,
 }) => {
   const { theme } = useTheme();
+  const navigation = useNavigation();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(100)).current;
   const scaleAnim = useRef(new Animated.Value(0.8)).current;
@@ -70,8 +71,21 @@ export const FloatingJournalMenu: React.FC<FloatingJournalMenuProps> = ({
   }, [visible, fadeAnim, slideAnim, scaleAnim]);
 
   const handleJournalPress = (journalType: string) => {
-    Alert.alert('Journal Selected', `You selected ${journalType}`);
     onClose();
+    
+    switch (journalType) {
+      case 'Cash Journal':
+        navigation.navigate('CashJournal' as never);
+        break;
+      case 'Bank Journal':
+        navigation.navigate('BankJournal' as never);
+        break;
+      case 'CC Journal':
+        navigation.navigate('CCJournal' as never);
+        break;
+      default:
+        break;
+    }
   };
 
   const menuItems = [

@@ -15,6 +15,11 @@ import {
   InsightsScreen,
   SettingsScreen,
   ProfileScreen,
+  COAScreen,
+  BillingScreen,
+  CashJournalScreen,
+  BankJournalScreen,
+  CCJournalScreen,
 } from '../screens';
 
 const Tab = createBottomTabNavigator();
@@ -278,21 +283,45 @@ const TabNavigator: React.FC = () => {
           }}
         />
         <Tab.Screen
-          name="COA"
-          component={SettingsScreen}
-          options={{
-            title: 'COA',
-            tabBarButton: () => null,
-          }}
-        />
-        <Tab.Screen
-          name="Billing"
-          component={SettingsScreen}
-          options={{
-            title: 'Billing',
-            tabBarButton: () => null,
-          }}
-        />
+           name="COA"
+           component={COAScreen}
+           options={{
+             title: 'COA',
+             tabBarButton: () => null,
+           }}
+         />
+         <Tab.Screen
+            name="Billing"
+            component={BillingScreen}
+            options={{
+              title: 'Billing',
+              tabBarButton: () => null,
+            }}
+          />
+          <Tab.Screen
+            name="CashJournal"
+            component={CashJournalScreen}
+            options={{
+              title: 'Cash Journal',
+              tabBarButton: () => null,
+            }}
+          />
+          <Tab.Screen
+            name="BankJournal"
+            component={BankJournalScreen}
+            options={{
+              title: 'Bank Journal',
+              tabBarButton: () => null,
+            }}
+          />
+          <Tab.Screen
+            name="CCJournal"
+            component={CCJournalScreen}
+            options={{
+              title: 'CC Journal',
+              tabBarButton: () => null,
+            }}
+          />
       </Tab.Navigator>
       
       <FloatingJournalMenu
