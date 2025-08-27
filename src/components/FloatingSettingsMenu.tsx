@@ -9,12 +9,14 @@ import {
   Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 
 interface FloatingSettingsMenuProps {
   visible: boolean;
   onClose: () => void;
+  navigation?: any;
 }
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
@@ -22,9 +24,11 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 export const FloatingSettingsMenu: React.FC<FloatingSettingsMenuProps> = ({
   visible,
   onClose,
+  navigation,
 }) => {
   const { theme } = useTheme();
   const { logout } = useAuth();
+  const nav = useNavigation();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(100)).current;
   const scaleAnim = useRef(new Animated.Value(0.8)).current;
@@ -72,25 +76,44 @@ export const FloatingSettingsMenu: React.FC<FloatingSettingsMenuProps> = ({
   }, [visible, fadeAnim, slideAnim, scaleAnim]);
 
   const handleSettingsPress = (settingType: string) => {
-    if (settingType === 'Logout') {
-      Alert.alert(
-        'Logout',
-        'Are you sure you want to logout?',
-        [
-          {
-            text: 'Cancel',
-            style: 'cancel',
-          },
-          {
-            text: 'Logout',
-            style: 'destructive',
-            onPress: async () => {
-              await logout();
-              onClose();
+    if (settingType === 'Profile') {
+      onClose();
+      // Navigate to Profile tab screen
+      nav.navigate('Profile' as never);
+    } else if (settingType === 'COA') {
+      onClose();
+      // Navigate to COA tab screen
+      nav.navigate('COA' as never);
+    } else if (settingType === 'Billing') {
+      onClose();
+      // Navigate to Billing tab screen
+      nav.navigate('Billing' as never);
+    } else if (settingType === 'Logout') {
+      // Add a small delay to ensure Activity is ready
+      setTimeout(() => {
+        Alert.alert(
+          'Logout',
+          'Are you sure you want to logout?',
+          [
+            {
+              text: 'Cancel',
+              style: 'cancel',
             },
-          },
-        ]
-      );
+            {
+              text: 'Logout',
+              style: 'destructive',
+              onPress: async () => {
+                try {
+                  await logout();
+                  onClose();
+                } catch (error) {
+                  console.log('Logout failed:', error);
+                }
+              },
+            },
+          ]
+        );
+      }, 100);
     } else {
       Alert.alert('Settings', `You selected ${settingType}`);
       onClose();

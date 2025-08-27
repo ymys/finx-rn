@@ -12,7 +12,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
-import { GoogleSignInButton } from '../components';
+import { GoogleSignInButton, ThemeToggle } from '../components';
 
 interface LoginScreenProps {
   onLogin: () => void;
@@ -59,31 +59,43 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: '#1a1a1a' }]}>
-      <StatusBar barStyle="light-content" backgroundColor="#1a1a1a" />
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <StatusBar 
+        barStyle={theme.isDark ? "light-content" : "dark-content"} 
+        backgroundColor={theme.colors.background} 
+      />
       
       <View style={styles.content}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.title}>FinanceHub</Text>
-          <Text style={styles.subtitle}>Global Banking Platform</Text>
+          <View style={styles.headerTop}>
+            <View style={styles.headerSpacer} />
+            <View style={styles.headerCenter}>
+              <Text style={[styles.title, { color: theme.colors.primary }]}>FinanceHub</Text>
+              <Text style={[styles.subtitle, { color: theme.colors.secondaryText }]}>Global Banking Platform</Text>
+            </View>
+            <ThemeToggle size={20} />
+          </View>
         </View>
 
         {/* Login Form Card */}
-        <View style={styles.formCard}>
+        <View style={[styles.formCard, { 
+          backgroundColor: theme.colors.surface, 
+          borderColor: theme.colors.border 
+        }]}>
           {/* Tab Buttons */}
           <View style={styles.tabContainer}>
             <TouchableOpacity
               style={[
                 styles.tabButton,
-                !isSignUp && styles.activeTab,
+                !isSignUp && { backgroundColor: theme.colors.primary },
               ]}
               onPress={() => setIsSignUp(false)}
             >
               <Text style={[
                 styles.tabText,
                 !isSignUp && styles.activeTabText,
-                isSignUp && styles.inactiveTabText,
+                isSignUp && { color: theme.colors.primaryText },
               ]}>
                 Sign In
               </Text>
@@ -91,14 +103,14 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
             <TouchableOpacity
               style={[
                 styles.tabButton,
-                isSignUp && styles.activeTab,
+                isSignUp && { backgroundColor: theme.colors.primary },
               ]}
               onPress={() => setIsSignUp(true)}
             >
               <Text style={[
                 styles.tabText,
                 isSignUp && styles.activeTabText,
-                !isSignUp && styles.inactiveTabText,
+                !isSignUp && { color: theme.colors.primaryText },
               ]}>
                 Sign Up
               </Text>
@@ -139,13 +151,16 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
 
           {/* Email Input */}
           <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Email Address</Text>
-            <View style={styles.inputWrapper}>
-              <Icon name="mail" size={20} color="#666" style={styles.inputIcon} />
+            <Text style={[styles.inputLabel, { color: theme.colors.primaryText }]}>Email Address</Text>
+            <View style={[styles.inputWrapper, { 
+              backgroundColor: theme.colors.glassEffect, 
+              borderColor: theme.colors.border 
+            }]}>
+              <Icon name="mail" size={20} color={theme.colors.secondaryText} style={styles.inputIcon} />
               <TextInput
-                style={styles.textInput}
+                style={[styles.textInput, { color: theme.colors.primaryText }]}
                 placeholder="your@email.com"
-                placeholderTextColor="#666"
+                placeholderTextColor={theme.colors.secondaryText}
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
@@ -209,16 +224,21 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
           )}
 
           {/* Sign In/Create Account Button */}
-          <TouchableOpacity style={styles.signInButton} onPress={handleLogin}>
-            <Text style={styles.signInButtonText}>{isSignUp ? 'Create Account' : 'Sign In'}</Text>
-            <Icon name="arrow-forward" size={20} color="#000" style={styles.arrowIcon} />
+          <TouchableOpacity 
+            style={[styles.signInButton, { backgroundColor: theme.colors.primary }]} 
+            onPress={handleLogin}
+          >
+            <Text style={[styles.signInButtonText, { color: theme.colors.contrast }]}>
+              {isSignUp ? 'Create Account' : 'Sign In'}
+            </Text>
+            <Icon name="arrow-forward" size={20} color={theme.colors.contrast} style={styles.arrowIcon} />
           </TouchableOpacity>
 
           {/* Divider */}
           <View style={styles.dividerContainer}>
-            <View style={styles.dividerLine} />
-            <Text style={styles.dividerText}>or</Text>
-            <View style={styles.dividerLine} />
+            <View style={[styles.dividerLine, { backgroundColor: theme.colors.border }]} />
+            <Text style={[styles.dividerText, { color: theme.colors.secondaryText }]}>or</Text>
+            <View style={[styles.dividerLine, { backgroundColor: theme.colors.border }]} />
           </View>
 
           {/* Google Sign In Button */}
@@ -242,26 +262,33 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   header: {
-    alignItems: 'center',
     marginBottom: 48,
+  },
+  headerTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  headerSpacer: {
+    width: 44, // Same width as ThemeToggle
+  },
+  headerCenter: {
+    alignItems: 'center',
+    flex: 1,
   },
   title: {
     fontSize: 32,
     fontWeight: '700',
-    color: '#7CB342',
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#999',
     fontWeight: '400',
   },
   formCard: {
-    backgroundColor: '#2a2a2a',
     borderRadius: 16,
     padding: 24,
     borderWidth: 1,
-    borderColor: '#333',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -281,12 +308,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 8,
   },
-  activeTab: {
-    backgroundColor: '#7CB342',
-  },
-  inactiveTab: {
-    backgroundColor: 'transparent',
-  },
   tabText: {
     fontSize: 16,
     fontWeight: '600',
@@ -294,25 +315,19 @@ const styles = StyleSheet.create({
   activeTabText: {
     color: '#000',
   },
-  inactiveTabText: {
-    color: '#fff',
-  },
   inputContainer: {
     marginBottom: 20,
   },
   inputLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#fff',
     marginBottom: 8,
   },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#333',
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#444',
     paddingHorizontal: 16,
     height: 52,
   },
@@ -322,13 +337,11 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     fontSize: 16,
-    color: '#fff',
   },
   eyeIcon: {
     padding: 4,
   },
   signInButton: {
-    backgroundColor: '#7CB342',
     borderRadius: 8,
     paddingVertical: 16,
     flexDirection: 'row',
@@ -340,7 +353,6 @@ const styles = StyleSheet.create({
   signInButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#000',
     marginRight: 8,
   },
   arrowIcon: {
@@ -354,11 +366,9 @@ const styles = StyleSheet.create({
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: '#444',
   },
   dividerText: {
     fontSize: 14,
-    color: '#999',
     marginHorizontal: 16,
   },
 

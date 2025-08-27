@@ -174,6 +174,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
       }
       
+      // Sign out from Directus (for email users)
+      try {
+        await directusAuth.logout();
+      } catch (directusError: any) {
+        console.log('Directus logout error:', directusError);
+        // Continue with local logout even if server logout fails
+      }
+      
       // Clear AsyncStorage
       await AsyncStorage.removeItem('user');
       
