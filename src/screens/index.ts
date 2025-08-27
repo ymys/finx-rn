@@ -10,3 +10,4 @@ export { BillingScreen } from './BillingScreen';
 export { CashJournalScreen } from './CashJournalScreen';
 export { BankJournalScreen } from './BankJournalScreen';
 export { CCJournalScreen } from './CCJournalScreen';
+export { SplashScreen } from './SplashScreen';
