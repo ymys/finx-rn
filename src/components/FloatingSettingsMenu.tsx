@@ -88,6 +88,10 @@ export const FloatingSettingsMenu: React.FC<FloatingSettingsMenuProps> = ({
       onClose();
       // Navigate to Billing tab screen
       nav.navigate('Billing' as never);
+    } else if (settingType === 'About') {
+      onClose();
+      // Navigate to About screen
+      nav.navigate('About' as never);
     } else if (settingType === 'Logout') {
       // Add a small delay to ensure Activity is ready
       setTimeout(() => {
@@ -138,6 +142,12 @@ export const FloatingSettingsMenu: React.FC<FloatingSettingsMenuProps> = ({
       icon: 'card-outline',
       color: '#FF9800',
       onPress: () => handleSettingsPress('Billing'),
+    },
+    {
+      title: 'About',
+      icon: 'information-circle-outline',
+      color: '#9C27B0',
+      onPress: () => handleSettingsPress('About'),
     },
     {
       title: 'Logout',

@@ -57,6 +57,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setIsLoading(true);
       
+      // Check if user has valid tokens
+      const accessToken = await directusAuth.getAccessToken();
+      if (accessToken) {
+        // Try to get current user
+        const currentUser = await directusAuth.getCurrentUser();
+        if (currentUser) {
+          setUser({
+            id: currentUser.id,
+            name: `${currentUser.first_name || ''} ${currentUser.last_name || ''}`.trim() || currentUser.email,
+            email: currentUser.email,
+            photo: currentUser.avatar,
+            provider: 'email', // Default to email, could be enhanced
+          });
+          setIsAuthenticated(true);
+          console.log('User authenticated from stored tokens');
+        } else {
+          // Invalid token, clear storage
+          await directusAuth.clearTokens();
+          console.log('Invalid tokens cleared');
+        }
+      }
+      
       // Check AsyncStorage for saved user
       const savedUser = await AsyncStorage.getItem('user');
       if (savedUser) {
@@ -136,6 +158,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const loginWithGoogle = async (userInfo: any) => {
     try {
+      setIsLoading(true);
       console.log('Google userInfo structure:', JSON.stringify(userInfo, null, 2));
       
       const user: User = {
@@ -154,6 +177,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } catch (error) {
       console.log('Login with Google error:', error);
       throw error;
+    } finally {
+      setIsLoading(false);
     }
   };
 

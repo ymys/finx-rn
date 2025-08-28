@@ -20,6 +20,7 @@ import {
   CashJournalScreen,
   BankJournalScreen,
   CCJournalScreen,
+  AboutScreen,
 } from '../screens';
 
 const Tab = createBottomTabNavigator();
@@ -118,6 +119,13 @@ const SettingsStackNavigator: React.FC = () => {
            component={ProfileScreen}
            options={{
              title: 'Profile',
+           }}
+         />
+        <SettingsStack.Screen 
+           name="About" 
+           component={AboutScreen}
+           options={{
+             title: 'About',
            }}
          />
       </SettingsStack.Navigator>
@@ -230,7 +238,7 @@ const TabNavigator: React.FC = () => {
           name="Wallet"
           component={PortfolioScreen}
           options={{
-            title: 'Portfolio Overview',
+            title: 'Portfolio',
           }}
         />
         <Tab.Screen
@@ -319,6 +327,14 @@ const TabNavigator: React.FC = () => {
             component={CCJournalScreen}
             options={{
               title: 'CC Journal',
+              tabBarButton: () => null,
+            }}
+          />
+          <Tab.Screen
+            name="About"
+            component={AboutScreen}
+            options={{
+              title: 'About',
               tabBarButton: () => null,
             }}
           />

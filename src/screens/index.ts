@@ -11,3 +11,4 @@ export { CashJournalScreen } from './CashJournalScreen';
 export { BankJournalScreen } from './BankJournalScreen';
 export { CCJournalScreen } from './CCJournalScreen';
 export { SplashScreen } from './SplashScreen';
+export { AboutScreen } from './AboutScreen';
